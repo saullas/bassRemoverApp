@@ -24,8 +24,8 @@ def upload_audio():
                 return render_template("public/upload_audio.html")
 
             new_filename = secure_filename(audiofile.filename)
-            audiofile.save(os.path.join(app.config["UPLOAD_FOLDER"]), new_filename)
-            print("image saved")
+            audiofile.save(os.path.join(app.config["UPLOAD_FOLDER"], new_filename))
+
             return render_template("public/upload_audio.html")
 
     return render_template("public/upload_audio.html")

@@ -1,39 +1,44 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, send_from_directory
 from werkzeug.utils import secure_filename
 import os
+import utils
+from bassRemover import remove_bass
 
 app = Flask(__name__)
 
-app.config["ALLOWED_EXTENSIONS"] = {"mp3", "wav", "flac"}
 app.config["UPLOAD_FOLDER"] = os.path.dirname(__file__) + '/static/audiofiles/uploads/'
+app.config["PROCESSED_FOLDER"] = os.path.dirname(__file__) + '/static/audiofiles/processed/'
+
+# delete all uploaded files when app starts
+utils.delete_all_audiofiles()
+
+# timer function to delete files
+utils.delete_uploads_timer()
 
 
-@app.route('/')
-def hello_world():
-    return 'Hello World!'
-
-
-@app.route("/uploadAudio", methods=["GET", "POST"])
+@app.route("/", methods=["GET", "POST"])
 def upload_audio():
 
     if request.method == "POST":
         if request.files:
             audiofile = request.files["audiofile"]
 
-            if not allowed_file(audiofile.filename):
-                return render_template("public/upload_audio.html")
+            if not utils.allowed_file(audiofile.filename):
+                return render_template("upload_audio.html")
 
-            new_filename = secure_filename(audiofile.filename)
-            audiofile.save(os.path.join(app.config["UPLOAD_FOLDER"], new_filename))
+            new_filename = os.path.splitext(secure_filename(audiofile.filename))[0] + ".wav"
 
-            return render_template("public/upload_audio.html")
+            audiofile_processed = remove_bass(audiofile)
+            audiofile_processed.export(app.config["PROCESSED_FOLDER"] + new_filename, format="wav")
 
-    return render_template("public/upload_audio.html")
+            return render_template("download_audio.html", filename=new_filename)
+    else:
+        return render_template("upload_audio.html")
 
 
-def allowed_file(filename):
-    a = '.' in filename and filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
-    return a
+@app.route("/downloadAudio/<filename>", methods=["GET"])
+def download_audio(filename):
+    return send_from_directory(app.config["PROCESSED_FOLDER"], filename, as_attachment=True)
 
 
 if __name__ == '__main__':

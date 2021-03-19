@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Bass remover</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/custom.css') }}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/4.3.0/jquery.form.min.js" integrity="sha384-qlmct0AOBiA2VPZkMY3+2WqkHtIQ9lSdAsAn5RUJD/3vA5MKDgSGcdmIv4"></script>
+</head>
+<body style="background:url('/static/styles/email-pattern.png')">
+    <h2>Remove bass from a song for free</h2>
+    <p class="lead">Supported formats: mp3 & wav</p>
+
+    <!-- Upload  -->
+    <form action="/" id="uploadAudio" class="uploader" method="POST">
+      <input id="file-upload" type="file" class="custom-file-input" name="audiofile" accept=".mp3,.wav">
+
+      <label for="file-upload" id="file-drag">
+        <div id="start">
+          <i class="fa fa-download" aria-hidden="true"></i>
+          <div>Select an audio file or drag it here</div>
+          <div id="notaudio">Wrong format</div>
+        </div>
+        <div id="response" class="hidden">
+          <div id="messages"></div>
+          <progress class="progress" id="file-progress" value="0">
+            <span>0</span>%
+          </progress>
+        </div>
+      </label>
+    </form>
+</body>
+</html>

@@ -6,29 +6,84 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/custom.css') }}">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/4.3.0/jquery.form.min.js" integrity="sha384-qlmct0AOBiA2VPZkMY3+2WqkHtIQ9lSdAsAn5RUJD/3vA5MKDgSGcdmIv4"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/4.3.0/jquery.form.min.js"></script>
 </head>
 <body style="background:url('/static/styles/email-pattern.png')">
     <h2>Remove bass from a song for free</h2>
     <p class="lead">Supported formats: mp3 & wav</p>
 
     <!-- Upload  -->
-    <form action="/" id="uploadAudio" class="uploader" method="POST">
-      <input id="file-upload" type="file" class="custom-file-input" name="audiofile" accept=".mp3,.wav">
+    <div class="container">
+        <form action="/" id="uploadAudio" class="uploader" method="POST">
+          <input id="file-upload" type="file" class="custom-file-input" name="audiofile" accept=".mp3, .wav">
 
-      <label for="file-upload" id="file-drag">
-        <div id="start">
-          <i class="fa fa-download" aria-hidden="true"></i>
-          <div>Select an audio file or drag it here</div>
-          <div id="notaudio">Wrong format</div>
-        </div>
-        <div id="response" class="hidden">
-          <div id="messages"></div>
-          <progress class="progress" id="file-progress" value="0">
-            <span>0</span>%
-          </progress>
-        </div>
-      </label>
-    </form>
+          <label for="file-upload" id="file-drag">
+            <div id="start">
+              <i class="fa fa-download" aria-hidden="true"></i>
+              <div id="text">Select an audio file or drag it here</div>
+    {#          <div id="notaudio">Wrong format</div>#}
+            </div>
+            <div id="response" class="hidden">
+              <div id="messages"></div>
+              <progress class="progress" id="file-progress" value="0">
+                <span>0</span>%
+              </progress>
+            </div>
+          </label>
+        </form>
+    </div>
+
+    <div class="download-div">
+      <a id="download" href="">Download processed file</a>
+    </div>
 </body>
+
+<script>
+    $(document).ready(function (){
+        $('#download').hide();
+
+        $('#uploadAudio').submit(function(event) {
+            if($('#file-upload').val()) {
+                event.preventDefault();
+                if ($('#download').is(":visible")) {
+                    $('#download').slideUp();
+                }
+                $('#response').show();
+                $('#text').text('Uploading file');
+                $('')
+                $(this).ajaxSubmit({
+                    target: '#file-progress',
+                    uploadProgress: function(event, position, total, percentageComplete) {
+                        $('.progress').animate({
+                            value: percentageComplete
+                        }, {
+                            duration: 5000
+                        });
+
+                        if (percentageComplete === 100) {
+                            $('#text').text('Uploaded succesfully. Processing...')
+                            $('#response').hide()
+                        }
+                    },
+                    success: function(data) {
+                        if (data['status'] === 200) {
+                            $('#text').text("Finished. Click to process another file.");
+                            $('#download').attr("href", '/downloadAudio/' + data["filename"]);
+                            $('#download').slideDown();
+                        }
+                        else {
+                            $('#text').text(data["error"]);
+                        }
+                    }
+                })
+            }
+            return false;
+        });
+
+        $('#uploadAudio').on('change', '#file-upload', function () {
+            $('#uploadAudio').submit();
+        });
+    });
+</script>
+
 </html>

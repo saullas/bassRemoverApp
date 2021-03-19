@@ -10,8 +10,8 @@ def delete_all_audiofiles():
 
 
 def delete_uploads_timer():
-    Timer(60.0, delete_uploads_timer).start()  # called every minute
-    print("Delete files")
+    Timer(300.0, delete_uploads_timer).start()
+    delete_all_audiofiles()
 
 
 def allowed_file(filename):

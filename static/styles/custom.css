@@ -26,7 +26,7 @@ html, body, * {
  .uploader {
 	 display: block;
 	 clear: both;
-	 margin: 0 auto;
+	 margin: 20px auto;
 	 width: 100%;
 	 max-width: 600px;
 }
@@ -89,15 +89,7 @@ html, body, * {
  .uploader #file-image.hidden {
 	 display: none;
 }
- .uploader #notimage {
-	 display: block;
-	 float: left;
-	 clear: both;
-	 width: 100%;
-}
- .uploader #notimage.hidden {
-	 display: none;
-}
+
  .uploader progress, .uploader .progress {
 	 display: inline;
 	 clear: both;
@@ -152,5 +144,31 @@ html, body, * {
  }
 
  .uploader:hover {
+	 opacity: 0.8;
+ }
+
+ #text {
+	 font-size: 20px;
+ }
+
+ #download {
+	 font-family: "Roboto", sans-serif;
+	 margin: 100px auto;
+	 font-size: 23px;
+	 font-weight: bold;
+	 text-decoration: none;
+	 color: #454cad;
+ }
+
+ .download-div {
+	 position: absolute;
+	 top: 300px;
+	 right: 25%;
+	 width: 50%;
+	 height: 50px;
+	 margin: 20px auto;
+ }
+
+ #download:hover {
 	 opacity: 0.8;
  }

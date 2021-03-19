@@ -1,12 +1,12 @@
-from flask import Flask, render_template, request, send_from_directory
+from flask import Flask, render_template, request, send_from_directory, jsonify
 from werkzeug.utils import secure_filename
 import os
 import utils
 from bassRemover import remove_bass
+import time
 
 app = Flask(__name__)
 
-app.config["UPLOAD_FOLDER"] = os.path.dirname(__file__) + '/static/audiofiles/uploads/'
 app.config["PROCESSED_FOLDER"] = os.path.dirname(__file__) + '/static/audiofiles/processed/'
 
 # delete all uploaded files when app starts
@@ -24,14 +24,25 @@ def upload_audio():
             audiofile = request.files["audiofile"]
 
             if not utils.allowed_file(audiofile.filename):
-                return render_template("upload_audio.html")
+                return render_template("upload_audio.html", message="Unsupported format")
 
-            new_filename = os.path.splitext(secure_filename(audiofile.filename))[0] + ".wav"
+            try:
+                currtime = time.strftime("%Y%m%d-%H%M%S")
+                unique_filename = os.path.splitext(secure_filename(audiofile.filename))[0] + currtime + ".wav"
 
-            audiofile_processed = remove_bass(audiofile)
-            audiofile_processed.export(app.config["PROCESSED_FOLDER"] + new_filename, format="wav")
+                audiofile_processed = remove_bass(audiofile)
+                audiofile_processed.export(app.config["PROCESSED_FOLDER"] + unique_filename, format="wav")
 
-            return render_template("download_audio.html", filename=new_filename)
+                return jsonify({
+                    "filename": unique_filename,
+                    "status": 200
+                })
+            except:
+                return jsonify({
+                    "error": "An error occured during processing. Please try again.",
+                    "status": 500
+                })
+
     else:
         return render_template("upload_audio.html")
 

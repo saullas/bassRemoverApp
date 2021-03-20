@@ -10,11 +10,8 @@ app = Flask(__name__)
 app.config["PROCESSED_FOLDER"] = os.path.dirname(__file__) + '/static/audiofiles/processed/'
 app.config["DOWNLOAD_FOLDER"] = os.path.dirname(__file__) + '/static/audiofiles/downloaded/'
 
-# delete all uploaded files when app starts
+# delete all saved files when app starts
 utils.delete_all_audiofiles()
-
-# timer function to delete files
-utils.delete_uploads_timer()
 
 
 @app.route("/", methods=["GET"])

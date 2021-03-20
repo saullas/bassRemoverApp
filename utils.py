@@ -18,15 +18,15 @@ ydl_opts = {
     'outtmpl': 'static/audiofiles/downloaded/' + '%(title)s.%(ext)s'
 }
 
+
 def delete_all_audiofiles():
     files = glob.glob('static/audiofiles/processed/*')
     for f in files:
         os.remove(f)
 
-
-def delete_uploads_timer():
-    Timer(300.0, delete_uploads_timer).start()
-    delete_all_audiofiles()
+    files = glob.glob('static/audiofiles/downloaded/*')
+    for f in files:
+        os.remove(f)
 
 
 def allowed_file(filename):

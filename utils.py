@@ -5,6 +5,8 @@ import os
 from threading import Timer
 from youtube_dl import YoutubeDL
 
+MAX_DURATION = 20 * 60
+
 ydl_opts = {
     'format': 'bestaudio/best',
     'postprocessors': [{
@@ -35,8 +37,13 @@ def allowed_file(filename):
 def download_audio_from_youtube_url(url):
     try:
         with YoutubeDL(ydl_opts) as ydl:
-            title = ydl.extract_info(url)["title"]
+            info = ydl.extract_info(url, download=False)
+
+            if info["duration"] > MAX_DURATION:
+                return "too long"
+
+            title = info["title"]
             ydl.download([url])
             return title + '.mp3'
     except:
-        return False
+        return "error"

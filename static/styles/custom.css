@@ -1,5 +1,5 @@
 @import url(https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css);
-@import url('https://fonts.googleapis.com/css?family=Roboto');
+@import url('https://fonts.googleapis.com/css2?family=Titillium+Web&display=swap');
 html, body, * {
 	 box-sizing: border-box;
 	 font-size: 16px;
@@ -7,19 +7,26 @@ html, body, * {
  html, body {
 	 height: 100%;
 	 text-align: center;
+	 font-family: 'Titillium Web', sans-serif;
 }
  body {
 	 padding: 2rem;
+	 background: url("wood_1_@2X.png");
 }
- h2 {
-	 font-family: "Roboto", sans-serif;
-	 font-size: 26px;
+
+ hr {
+	 border-color: white;
+ }
+
+ h1 {
 	 line-height: 1;
-	 color: #454cad;
-	 margin-bottom: 0;
+	 margin-top: 20px;
+	 margin-bottom: 50px;
+	 font-size: 50px;
+	 color: white;
+	 font-weight: bold;
 }
  p {
-	 font-family: "Roboto", sans-serif;
 	 font-size: 18px;
 	 color: #5f6982;
 }
@@ -152,29 +159,28 @@ html, body, * {
  }
 
  #download {
-	 font-family: "Roboto", sans-serif;
 	 margin: 100px auto;
 	 font-size: 25px;
 	 font-weight: bold;
 	 text-decoration: none;
-	 color: #454cad;
+	 color: white;
  }
 
  .download-div {
-	  position: relative;
+	  position: absolute;
 	  right: 50%;
 	  left: 50%;
-	  width: auto;
+	 bottom: 45%;
+	  width: 30%;
 	  transform: translate(-50%, 10%);
 	  max-width: 600px;
 	  margin-top: 50px;
  }
 
  #underDownload {
-	 font-family: "Roboto", sans-serif;
 	 font-size: 15px;
 	 text-decoration: none;
-	 color: #454cad;
+	 color: white;
 	 opacity: 0.8;
  }
 
@@ -190,7 +196,17 @@ html, body, * {
 	  width: auto;
 	  transform: translate(-50%, 0);
 	  max-width: 600px;
-	  margin: 30px 0;
+	  margin: 60px 0;
+  }
+
+  #message-div {
+	  position: relative;
+	  right: 50%;
+	  left: 50%;
+	  width: auto;
+	  transform: translate(-50%, 0);
+	  max-width: 600px;
+	  margin: 40px 0;
   }
 
   .btn-outline-secondary:hover {
@@ -215,4 +231,8 @@ html, body, * {
 	background-repeat: no-repeat;
 	background-position: center;
 	background-size: auto 100px;
+}
+
+#user-message {
+	color: white;
 }

@@ -9,124 +9,52 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/4.3.0/jquery.form.min.js"></script>
+    <script src="{{ url_for('static', filename="js/custom.js") }}"></script>
 </head>
-<body style="background:url('/static/styles/email-pattern.png')">
-    <h2>Remove bass from a song for free</h2>
-    <p class="lead">Supported formats: mp3 & wav</p>
+<body>
+    <div class="bg-image"></div>
+    <div class="app">
+        <h1>Free online bass remover</h1>
+        <hr>
 
-    <div id="loading-overlay"></div>
+        <div id="loading-overlay"></div>
 
-    <div id="outer-youtube-div">
-        <form action="/uploadUrl" method="POST" class="input-group mb-3 youtube-url-form" id="url-submit">
-            <input id="youtube-url-input" type="text" class="form-control" name="youtube-url" placeholder="Paste youtube video url" aria-label="Recipient's username">
-            <div class="input-group-append">
-                <button id="youtube-submit" class="btn btn-outline-secondary" type="submit">Submit</button>
+        <div id="message-div">
+            <p id="user-message">No message</p>
+        </div>
+
+        <div id="outer-youtube-div">
+            <form action="/uploadUrl" method="POST" class="input-group mb-3 youtube-url-form" id="url-submit">
+                <input id="youtube-url-input" type="text" class="form-control" name="youtube-url" placeholder="Paste youtube video url (video length max 20 minutes)" aria-label="Recipient's username">
+                <div class="input-group-append">
+                    <button id="youtube-submit" class="btn btn-outline-secondary" type="submit">Submit</button>
+                </div>
+            </form>
+        </div>
+
+        <p class="lead" style="color: white">OR</p>
+
+        <form action="/uploadAudio" id="uploadAudio" class="uploader" method="POST">
+          <input id="file-upload" type="file" class="custom-file-input" name="audiofile" accept=".mp3, .wav">
+
+          <label for="file-upload" id="file-drag">
+            <div id="start">
+              <i class="fa fa-download" aria-hidden="true"></i>
+              <div id="text">Select an audio file (mp3 or wav)</div>
             </div>
+            <div id="response" class="hidden">
+              <progress class="progress" id="file-progress" value="0">
+                <span>0</span>%
+              </progress>
+            </div>
+          </label>
         </form>
-    </div>
 
-    <p class="lead">OR</p>
-
-    <form action="/uploadAudio" id="uploadAudio" class="uploader" method="POST">
-      <input id="file-upload" type="file" class="custom-file-input" name="audiofile" accept=".mp3, .wav">
-
-      <label for="file-upload" id="file-drag">
-        <div id="start">
-          <i class="fa fa-download" aria-hidden="true"></i>
-          <div id="text">Select an audio file or drag it here</div>
+        <div class="download-div" id="download-group">
+          <a id="download" href="">Download processed file</a>
+          <br>
+          <a id="underDownload" href="">(Will be deleted after closing download window.)</a>
         </div>
-        <div id="response" class="hidden">
-          <progress class="progress" id="file-progress" value="0">
-            <span>0</span>%
-          </progress>
-        </div>
-      </label>
-    </form>
-
-    <div class="download-div" id="download-group">
-      <a id="download" href="">Download processed file</a>
-      <p id="underDownload">(Will be deleted after closing download window.)</p>
     </div>
 </body>
-
-<script>
-    $(document).ready(function (){
-        $('#download-group').hide();
-
-        $('#download').on('click', function () {
-            $('#download-group').fadeOut();
-        });
-
-        $('#uploadAudio').on('submit', function(event) {
-            if($('#file-upload').val()) {
-                event.preventDefault();
-                if ($('#download-group').is(":visible")) {
-                    $('#download-group').fadeOut();
-                }
-                $('#response').show();
-                $('#text').text('Uploading file');
-                $(this).ajaxSubmit({
-                    target: '#file-progress',
-                    uploadProgress: function(event, position, total, percentageComplete) {
-                        $('.progress').animate({
-                            value: percentageComplete
-                        }, {
-                            duration: 5000
-                        });
-
-                        if (percentageComplete === 100) {
-                            $('#text').text('Uploaded succesfully. Processing...')
-                            $('#response').hide()
-                            $('#loading-overlay').fadeIn()
-                        }
-                    },
-                    success: function(data) {
-                        if (data['status'] === 200) {
-                            $('#text').text("Finished. Click to process another file.");
-                            $('#download').attr("href", '/downloadAudio/' + data["filename"]);
-                            $('#loading-overlay').fadeOut()
-                            $('#download-group').fadeIn(2000);
-                        }
-                        else {
-                            $('#loading-overlay').fadeOut()
-                            $('#text').text(data["error"]);
-                        }
-                    }
-                })
-            }
-            return false;
-        });
-
-        $('#url-submit').on('submit', function(event) {
-            console.log("beenhere")
-            if($('#youtube-url-input').val()) {
-                event.preventDefault();
-                if ($('#download-group').is(":visible")) {
-                    $('#download-group').fadeOut();
-                }
-                $('#loading-overlay').fadeIn()
-                $(this).ajaxSubmit({
-                    success: function(data) {
-                        if (data['status'] === 200) {
-                            $('#text').text("Finished. Click to process another file.");
-                            $('#download').attr("href", '/downloadAudio/' + data["filename"]);
-                            $('#loading-overlay').fadeOut()
-                            $('#download-group').fadeIn(2000);
-                        }
-                        else {
-                            $('#loading-overlay').fadeOut()
-                            $('#text').text(data["error"]);
-                        }
-                    }
-                })
-            }
-            return false;
-        });
-
-        $('#uploadAudio').on('change', '#file-upload', function () {
-            $('#uploadAudio').submit();
-        });
-    });
-</script>
-
 </html>

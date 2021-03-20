@@ -27,31 +27,36 @@ def upload_url():
     url = request.form["youtube-url"]
     fileName = utils.download_audio_from_youtube_url(url)
 
-    if not fileName:
+    if fileName == "too long":
+        return jsonify({
+            "error": "Requested video is too long (max 20 minutes).",
+            "status": 400
+        })
+    elif fileName == "error":
         return jsonify({
             "error": "An error occured during downloading audio from youtube. Check if url you submitted is valid.",
             "status": 500
         })
+    else:
+        try:
+            audiofile_processed = remove_bass(filePath=app.config["DOWNLOAD_FOLDER"] + fileName)
 
-    try:
-        audiofile_processed = remove_bass(filePath=app.config["DOWNLOAD_FOLDER"] + fileName)
+            # we remove donwloaded audio, we dont need it anymore
+            os.remove(app.config["DOWNLOAD_FOLDER"] + fileName)
 
-        # we remove donwloaded audio, we dont need it anymore
-        os.remove(app.config["DOWNLOAD_FOLDER"] + fileName)
+            currtime = time.strftime("%Y%m%d-%H%M%S")
+            unique_filename = secure_filename(fileName) + currtime + ".wav"
+            audiofile_processed.export(app.config["PROCESSED_FOLDER"] + unique_filename, format="wav")
 
-        currtime = time.strftime("%Y%m%d-%H%M%S")
-        unique_filename = secure_filename(fileName) + currtime + ".wav"
-        audiofile_processed.export(app.config["PROCESSED_FOLDER"] + unique_filename, format="wav")
-
-        return jsonify({
-            "filename": unique_filename,
-            "status": 200
-        })
-    except Exception as e:
-        return jsonify({
-            "error": "An error occured during processing. Please try again.",
-            "status": 500
-        })
+            return jsonify({
+                "filename": unique_filename,
+                "status": 200
+            })
+        except Exception as e:
+            return jsonify({
+                "error": "An error occured during processing. Please try again.",
+                "status": 500
+            })
 
 
 @app.route("/uploadAudio", methods=["POST"])

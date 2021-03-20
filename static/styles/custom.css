@@ -26,7 +26,7 @@ html, body, * {
  .uploader {
 	 display: block;
 	 clear: both;
-	 margin: 20px auto;
+	 margin: 30px auto;
 	 width: 100%;
 	 max-width: 600px;
 }
@@ -39,7 +39,7 @@ html, body, * {
 	 text-align: center;
 	 background: #fff;
 	 border-radius: 7px;
-	 border: 3px solid #eee;
+	 border: 2px solid #eee;
 	 transition: all 0.2s ease;
 	 user-select: none;
 }
@@ -154,21 +154,65 @@ html, body, * {
  #download {
 	 font-family: "Roboto", sans-serif;
 	 margin: 100px auto;
-	 font-size: 23px;
+	 font-size: 25px;
 	 font-weight: bold;
 	 text-decoration: none;
 	 color: #454cad;
  }
 
  .download-div {
-	 position: absolute;
-	 top: 300px;
-	 right: 25%;
-	 width: 50%;
-	 height: 50px;
-	 margin: 20px auto;
+	  position: relative;
+	  right: 50%;
+	  left: 50%;
+	  width: auto;
+	  transform: translate(-50%, 10%);
+	  max-width: 600px;
+	  margin-top: 50px;
  }
 
- #download:hover {
+ #underDownload {
+	 font-family: "Roboto", sans-serif;
+	 font-size: 15px;
+	 text-decoration: none;
+	 color: #454cad;
 	 opacity: 0.8;
  }
+
+  #download-group:hover {
+	 opacity: 0.8;
+	 cursor: pointer;
+ }
+
+  #outer-youtube-div {
+	  position: relative;
+	  right: 50%;
+	  left: 50%;
+	  width: auto;
+	  transform: translate(-50%, 0);
+	  max-width: 600px;
+	  margin: 30px 0;
+  }
+
+  .btn-outline-secondary:hover {
+	 cursor: pointer;
+	 opacity: 0.75;
+	 background: #454cad;
+  }
+
+#loading-overlay {
+  position: fixed; /* Sit on top of the page content */
+  display: none;
+	width: 100%; /* Full width (cover the whole page) */
+  height: 100%; /* Full height (cover the whole page) */
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0,0,0,0.4); /* Black background with opacity */
+  z-index: 2; /* Specify a stack order in case you're using a different order for other elements */
+  cursor: pointer; /* Add a pointer on hover */
+  background-image: url("loading-icon-bigger.gif");
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: auto 150px;
+}

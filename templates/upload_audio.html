@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Bass remover</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename="styles/bootstrap.css") }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/custom.css') }}">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
@@ -12,41 +13,50 @@
     <h2>Remove bass from a song for free</h2>
     <p class="lead">Supported formats: mp3 & wav</p>
 
-    <!-- Upload  -->
-    <div class="container">
-        <form action="/" id="uploadAudio" class="uploader" method="POST">
-          <input id="file-upload" type="file" class="custom-file-input" name="audiofile" accept=".mp3, .wav">
+    <div id="loading-overlay"></div>
 
-          <label for="file-upload" id="file-drag">
-            <div id="start">
-              <i class="fa fa-download" aria-hidden="true"></i>
-              <div id="text">Select an audio file or drag it here</div>
-    {#          <div id="notaudio">Wrong format</div>#}
+    <div id="outer-youtube-div">
+        <form action="/uploadUrl" method="POST" class="input-group mb-3 youtube-url-form">
+            <input id="youtube-url-input" type="text" class="form-control" placeholder="Paste youtube video url" aria-label="Recipient's username" aria-describedby="basic-addon2">
+            <div class="input-group-append">
+                <button class="btn btn-outline-secondary" type="button">Submit</button>
             </div>
-            <div id="response" class="hidden">
-              <div id="messages"></div>
-              <progress class="progress" id="file-progress" value="0">
-                <span>0</span>%
-              </progress>
-            </div>
-          </label>
         </form>
     </div>
 
-    <div class="download-div">
+    <p class="lead">OR</p>
+
+    <form action="/uploadAudio" id="uploadAudio" class="uploader" method="POST">
+      <input id="file-upload" type="file" class="custom-file-input" name="audiofile" accept=".mp3, .wav">
+
+      <label for="file-upload" id="file-drag">
+        <div id="start">
+          <i class="fa fa-download" aria-hidden="true"></i>
+          <div id="text">Select an audio file or drag it here</div>
+        </div>
+        <div id="response" class="hidden">
+          <progress class="progress" id="file-progress" value="0">
+            <span>0</span>%
+          </progress>
+        </div>
+      </label>
+    </form>
+
+    <div class="download-div" id="download-group">
       <a id="download" href="">Download processed file</a>
+      <p id="underDownload">(Will be deleted after download and page refresh.)</p>
     </div>
 </body>
 
 <script>
     $(document).ready(function (){
-        $('#download').hide();
+        $('#download-group').hide();
 
         $('#uploadAudio').submit(function(event) {
             if($('#file-upload').val()) {
                 event.preventDefault();
-                if ($('#download').is(":visible")) {
-                    $('#download').slideUp();
+                if ($('#download-group').is(":visible")) {
+                    $('#download-group').slideUp();
                 }
                 $('#response').show();
                 $('#text').text('Uploading file');
@@ -63,15 +73,18 @@
                         if (percentageComplete === 100) {
                             $('#text').text('Uploaded succesfully. Processing...')
                             $('#response').hide()
+                            $('#loading-overlay').fadeIn()
                         }
                     },
                     success: function(data) {
                         if (data['status'] === 200) {
                             $('#text').text("Finished. Click to process another file.");
                             $('#download').attr("href", '/downloadAudio/' + data["filename"]);
-                            $('#download').slideDown();
+                            $('#loading-overlay').fadeOut()
+                            $('#download-group').fadeIn(2000);
                         }
                         else {
+                            $('#loading-overlay').fadeOut()
                             $('#text').text(data["error"]);
                         }
                     }

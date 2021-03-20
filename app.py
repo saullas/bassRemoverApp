@@ -8,6 +8,7 @@ import time
 app = Flask(__name__)
 
 app.config["PROCESSED_FOLDER"] = os.path.dirname(__file__) + '/static/audiofiles/processed/'
+app.config["DOWNLOAD_FOLDER"] = os.path.dirname(__file__) + '/static/audiofiles/downloaded/'
 
 # delete all uploaded files when app starts
 utils.delete_all_audiofiles()
@@ -23,7 +24,34 @@ def homePage():
 
 @app.route("/uploadUrl", methods=["POST"])
 def upload_url():
-    return None
+    url = request.form["youtube-url"]
+    fileName = utils.download_audio_from_youtube_url(url)
+
+    if not fileName:
+        return jsonify({
+            "error": "An error occured during downloading audio from youtube. Check if url you submitted is valid.",
+            "status": 500
+        })
+
+    try:
+        audiofile_processed = remove_bass(filePath=app.config["DOWNLOAD_FOLDER"] + fileName)
+
+        # we remove donwloaded audio, we dont need it anymore
+        os.remove(app.config["DOWNLOAD_FOLDER"] + fileName)
+
+        currtime = time.strftime("%Y%m%d-%H%M%S")
+        unique_filename = secure_filename(fileName) + currtime + ".wav"
+        audiofile_processed.export(app.config["PROCESSED_FOLDER"] + unique_filename, format="wav")
+
+        return jsonify({
+            "filename": unique_filename,
+            "status": 200
+        })
+    except Exception as e:
+        return jsonify({
+            "error": "An error occured during processing. Please try again.",
+            "status": 500
+        })
 
 
 @app.route("/uploadAudio", methods=["POST"])
@@ -41,7 +69,7 @@ def upload_audio():
             currtime = time.strftime("%Y%m%d-%H%M%S")
             unique_filename = os.path.splitext(secure_filename(audiofile.filename))[0] + currtime + ".wav"
 
-            audiofile_processed = remove_bass(audiofile)
+            audiofile_processed = remove_bass(audiofile=audiofile)
             audiofile_processed.export(app.config["PROCESSED_FOLDER"] + unique_filename, format="wav")
 
             return jsonify({
@@ -65,8 +93,11 @@ def download_audio(filename):
     try:
         @after_this_request
         def remove_file(response):
-            os.remove(app.config["PROCESSED_FOLDER"] + filename)
-            return response
+            try:
+                os.remove(app.config["PROCESSED_FOLDER"] + filename)
+                return response
+            except:
+                return response
 
         return send_from_directory(app.config["PROCESSED_FOLDER"], filename, as_attachment=True)
     except:

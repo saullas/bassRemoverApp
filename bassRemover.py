@@ -9,14 +9,19 @@ def band_cut_filter(seg, low_cutoff_freq, high_cutoff_freq, order=10):
     return seg.apply_mono_filter_to_each_channel(filter_fn)
 
 
-def remove_bass(audiofile):
+def remove_bass(audiofile=None, filePath=None):
     # Read in audio file and get the two mono tracks
-    extension = os.path.splitext(audiofile.filename)[1]
+    if filePath:
+        sound_stereo = AudioSegment.from_file(filePath).apply_gain(-4)
+    elif audiofile:
+        extension = os.path.splitext(audiofile.filename)[1]
 
-    if extension == ".mp3":
-        sound_stereo = AudioSegment.from_mp3(audiofile).apply_gain(-4)
+        if extension == ".mp3":
+            sound_stereo = AudioSegment.from_mp3(audiofile).apply_gain(-4)
+        else:
+            sound_stereo = AudioSegment.from_wav(audiofile).apply_gain(-4)
     else:
-        sound_stereo = AudioSegment.from_wav(audiofile).apply_gain(-4)
+        return None
 
     sound_mono = sound_stereo.split_to_mono()
     sound_monoL = sound_mono[0]

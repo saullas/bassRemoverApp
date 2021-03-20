@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Bass remover</title>
+    <link rel="icon" href="{{ url_for('static', filename="styles/pageicon.png") }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename="styles/bootstrap.css") }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/custom.css') }}">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
@@ -16,10 +17,10 @@
     <div id="loading-overlay"></div>
 
     <div id="outer-youtube-div">
-        <form action="/uploadUrl" method="POST" class="input-group mb-3 youtube-url-form">
-            <input id="youtube-url-input" type="text" class="form-control" placeholder="Paste youtube video url" aria-label="Recipient's username" aria-describedby="basic-addon2">
+        <form action="/uploadUrl" method="POST" class="input-group mb-3 youtube-url-form" id="url-submit">
+            <input id="youtube-url-input" type="text" class="form-control" name="youtube-url" placeholder="Paste youtube video url" aria-label="Recipient's username">
             <div class="input-group-append">
-                <button class="btn btn-outline-secondary" type="button">Submit</button>
+                <button id="youtube-submit" class="btn btn-outline-secondary" type="submit">Submit</button>
             </div>
         </form>
     </div>
@@ -44,7 +45,7 @@
 
     <div class="download-div" id="download-group">
       <a id="download" href="">Download processed file</a>
-      <p id="underDownload">(Will be deleted after download and page refresh.)</p>
+      <p id="underDownload">(Will be deleted after closing download window.)</p>
     </div>
 </body>
 
@@ -52,15 +53,18 @@
     $(document).ready(function (){
         $('#download-group').hide();
 
-        $('#uploadAudio').submit(function(event) {
+        $('#download').on('click', function () {
+            $('#download-group').fadeOut();
+        });
+
+        $('#uploadAudio').on('submit', function(event) {
             if($('#file-upload').val()) {
                 event.preventDefault();
                 if ($('#download-group').is(":visible")) {
-                    $('#download-group').slideUp();
+                    $('#download-group').fadeOut();
                 }
                 $('#response').show();
                 $('#text').text('Uploading file');
-                $('')
                 $(this).ajaxSubmit({
                     target: '#file-progress',
                     uploadProgress: function(event, position, total, percentageComplete) {
@@ -76,6 +80,32 @@
                             $('#loading-overlay').fadeIn()
                         }
                     },
+                    success: function(data) {
+                        if (data['status'] === 200) {
+                            $('#text').text("Finished. Click to process another file.");
+                            $('#download').attr("href", '/downloadAudio/' + data["filename"]);
+                            $('#loading-overlay').fadeOut()
+                            $('#download-group').fadeIn(2000);
+                        }
+                        else {
+                            $('#loading-overlay').fadeOut()
+                            $('#text').text(data["error"]);
+                        }
+                    }
+                })
+            }
+            return false;
+        });
+
+        $('#url-submit').on('submit', function(event) {
+            console.log("beenhere")
+            if($('#youtube-url-input').val()) {
+                event.preventDefault();
+                if ($('#download-group').is(":visible")) {
+                    $('#download-group').fadeOut();
+                }
+                $('#loading-overlay').fadeIn()
+                $(this).ajaxSubmit({
                     success: function(data) {
                         if (data['status'] === 200) {
                             $('#text').text("Finished. Click to process another file.");

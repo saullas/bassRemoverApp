@@ -211,8 +211,8 @@ html, body, * {
   background-color: rgba(0,0,0,0.4); /* Black background with opacity */
   z-index: 2; /* Specify a stack order in case you're using a different order for other elements */
   cursor: pointer; /* Add a pointer on hover */
-  background-image: url("loading-icon-bigger.gif");
+  background-image: url("loading-icon-eq.gif");
 	background-repeat: no-repeat;
 	background-position: center;
-	background-size: auto 150px;
+	background-size: auto 100px;
 }

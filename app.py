@@ -7,8 +7,8 @@ import time
 
 app = Flask(__name__)
 
-app.config["PROCESSED_FOLDER"] = os.path.dirname(__file__) + '/static/audiofiles/processed/'
-app.config["DOWNLOAD_FOLDER"] = os.path.dirname(__file__) + '/static/audiofiles/downloaded/'
+processed_folder = os.path.dirname(__file__) + '/static/audiofiles/processed/'
+download_folder = os.path.dirname(__file__) + '/static/audiofiles/downloaded/'
 
 # delete all saved files when app starts
 utils.delete_all_audiofiles()
@@ -36,14 +36,14 @@ def upload_url():
         })
     else:
         try:
-            audiofile_processed = remove_bass(filePath='static/audiofiles/downloaded/' + fileName)
+            audiofile_processed = remove_bass(filePath=download_folder + fileName)
 
-            # we remove donwloaded audio, we dont need it anymore
-            os.remove('static/audiofiles/downloaded/' + fileName)
+            # remove downloaded audio, we dont need it anymore
+            os.remove(download_folder + fileName)
 
             currtime = time.strftime("%Y%m%d-%H%M%S")
             unique_filename = secure_filename(fileName) + currtime + ".wav"
-            audiofile_processed.export('static/audiofiles/processed/' + unique_filename, format="wav")
+            audiofile_processed.export(processed_folder + unique_filename, format="wav")
 
             return jsonify({
                 "filename": unique_filename,
@@ -72,7 +72,7 @@ def upload_audio():
             unique_filename = os.path.splitext(secure_filename(audiofile.filename))[0] + currtime + ".wav"
 
             audiofile_processed = remove_bass(audiofile=audiofile)
-            audiofile_processed.export('static/audiofiles/processed/' + unique_filename, format="wav")
+            audiofile_processed.export(processed_folder + unique_filename, format="wav")
 
             return jsonify({
                 "filename": unique_filename,
@@ -98,12 +98,12 @@ def download_audio(filename):
         @after_this_request
         def remove_file(response):
             try:
-                os.remove(filename)
+                os.remove(processed_folder + filename)
                 return response
             except:
                 return response
 
-        return send_from_directory('static/audiofiles/processed/', filename, as_attachment=True)
+        return send_from_directory(processed_folder, filename, as_attachment=True)
     except:
         return jsonify({
             "error": "There was an error fetching your file.",

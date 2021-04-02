@@ -6,6 +6,9 @@ from youtube_dl import YoutubeDL
 
 MAX_DURATION = 20 * 60
 
+processed_folder = os.path.dirname(__file__) + '/static/audiofiles/processed/'
+download_folder = os.path.dirname(__file__) + '/static/audiofiles/downloaded/'
+
 ydl_opts = {
     'format': 'bestaudio/best',
     'postprocessors': [{
@@ -14,16 +17,16 @@ ydl_opts = {
         'preferredquality': '192',
     }],
     'prefer_ffmpeg': True,
-    'outtmpl': 'static/audiofiles/downloaded/' + '%(title)s.%(ext)s'
+    'outtmpl': download_folder + '%(title)s.%(ext)s'
 }
 
 
 def delete_all_audiofiles():
-    files = glob.glob('static/audiofiles/processed/*.wav')
+    files = glob.glob(processed_folder + '*.wav')
     for f in files:
         os.remove(f)
 
-    files = glob.glob('static/audiofiles/downloaded/*.mp3')
+    files = glob.glob(download_folder + '*.mp3')
     for f in files:
         os.remove(f)
 

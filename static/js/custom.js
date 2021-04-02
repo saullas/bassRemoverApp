@@ -21,13 +21,14 @@ $(document).ready(function (){
             var numberOfDots = 0
             var uploadingText = setInterval(function () {
                 numberOfDots = numberOfDots % 3 + 1
-                console.log(numberOfDots)
                 $('#text').text(`Uploading file${'.'.repeat(numberOfDots)}`);
             }, 350);
 
 
             $(this).ajaxSubmit({
                 uploadProgress: function(event, position, total, percentageComplete) {
+                    console.log(percentageComplete)
+
                     if (percentageComplete === 100) {
                         clearInterval(uploadingText)
                         $('#text').text('File uploaded succesfully. Processing...')

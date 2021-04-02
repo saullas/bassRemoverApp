@@ -6,9 +6,9 @@
     <link rel="icon" href="{{ url_for('static', filename="styles/pageicon.png") }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename="styles/bootstrap.css") }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/custom.css') }}">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/4.3.0/jquery.form.min.js"></script>
+    <script src="{{ url_for('static', filename="js/jquery.min.js") }}"></script>
+    <script src="{{ url_for('static', filename="js/bootstrap.js") }}"></script>
+    <script src="{{ url_for('static', filename="js/jquery.form.min.js") }}"></script>
     <script src="{{ url_for('static', filename="js/custom.js") }}"></script>
 </head>
 <body>
@@ -23,6 +23,12 @@
             <p id="user-message">No message</p>
         </div>
 
+        <div class="download-div" id="download-group">
+          <a id="download" href="">Download processed file</a>
+          <br>
+          <a id="underDownload" href="">(Will be deleted after closing download window.)</a>
+        </div>
+
         <div id="outer-youtube-div">
             <form action="/uploadUrl" method="POST" class="input-group mb-3 youtube-url-form" id="url-submit">
                 <input id="youtube-url-input" type="text" class="form-control" name="youtube-url" placeholder="Paste youtube video url (video length max 20 minutes)" aria-label="Recipient's username">
@@ -34,26 +40,21 @@
 
         <p class="lead" style="color: white">OR</p>
 
-        <form action="/uploadAudio" id="uploadAudio" class="uploader" method="POST">
-          <input id="file-upload" type="file" class="custom-file-input" name="audiofile" accept=".mp3, .wav">
+        <div class="container">
+            <form action="/uploadAudio" id="uploadAudio" class="uploader" method="POST">
+              <input id="file-upload" type="file" class="custom-file-input" name="audiofile" accept=".mp3, .wav">
 
-          <label for="file-upload" id="file-drag">
-            <div id="start">
-              <i class="fa fa-download" aria-hidden="true"></i>
-              <div id="text">Select an audio file (mp3 or wav)</div>
-            </div>
-            <div id="response" class="hidden">
-              <progress class="progress" id="file-progress" value="0">
-                <span>0</span>%
-              </progress>
-            </div>
-          </label>
-        </form>
-
-        <div class="download-div" id="download-group">
-          <a id="download" href="">Download processed file</a>
-          <br>
-          <a id="underDownload" href="">(Will be deleted after closing download window.)</a>
+              <label for="file-upload" id="file-drag">
+                <div id="start">
+                  <i class="fa fa-download" aria-hidden="true"></i>
+                  <div id="text">Select an audio file (mp3 or wav)</div>
+                </div>
+{#                <div id="response" class="hidden">#}
+{#                  <progress class="progress" id="file-progress" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">#}
+{#                  </progress>#}
+{#                </div>#}
+              </label>
+            </form>
         </div>
     </div>
 </body>

@@ -2,3 +2,4 @@ venv/*
 .idea/*
 tutorial-env/*
 __pycache__/*
+test-songs/*

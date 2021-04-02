@@ -167,14 +167,13 @@ html, body, * {
  }
 
  .download-div {
-	  position: absolute;
+	  position: relative;
 	  right: 50%;
 	  left: 50%;
-	 bottom: 45%;
-	  width: 30%;
-	  transform: translate(-50%, 10%);
+	  width: auto;
+	  transform: translate(-50%, 0);
 	  max-width: 600px;
-	  margin-top: 50px;
+	  margin: 60px 0;
  }
 
  #underDownload {
@@ -224,7 +223,7 @@ html, body, * {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0,0,0,0.4); /* Black background with opacity */
+  background-color: rgba(0,0,0,0.7); /* Black background with opacity */
   z-index: 2; /* Specify a stack order in case you're using a different order for other elements */
   cursor: pointer; /* Add a pointer on hover */
   background-image: url("loading-icon-eq.gif");

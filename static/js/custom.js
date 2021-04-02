@@ -16,20 +16,21 @@ $(document).ready(function (){
             if ($('#user-message').is(":visible")) {
                 $('#user-message').fadeOut();
             }
-            $('#response').show();
-            $('#text').text('Uploading file');
-            $(this).ajaxSubmit({
-                target: '#file-progress',
-                uploadProgress: function(event, position, total, percentageComplete) {
-                    $('.progress').animate({
-                        value: percentageComplete
-                    }, {
-                        duration: 5000
-                    });
+            // $('#response').show();
 
+            var numberOfDots = 0
+            var uploadingText = setInterval(function () {
+                numberOfDots = numberOfDots % 3 + 1
+                console.log(numberOfDots)
+                $('#text').text(`Uploading file${'.'.repeat(numberOfDots)}`);
+            }, 350);
+
+
+            $(this).ajaxSubmit({
+                uploadProgress: function(event, position, total, percentageComplete) {
                     if (percentageComplete === 100) {
-                        $('#text').text('Uploaded succesfully. Processing...')
-                        $('#response').hide()
+                        clearInterval(uploadingText)
+                        $('#text').text('File uploaded succesfully. Processing...')
                         $('#loading-overlay').fadeIn()
                     }
                 },
@@ -43,11 +44,13 @@ $(document).ready(function (){
                     }
                     else {
                         $('#loading-overlay').fadeOut()
+                        $('#text').text('Select an audio file (mp3 or wav)');
                         $('#user-message').fadeIn();
                         $('#user-message').text(data["error"]);
                     }
                 }
             })
+            $('#file-upload').val(undefined)
         }
         return false;
     });

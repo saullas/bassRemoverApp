@@ -36,14 +36,14 @@ def upload_url():
         })
     else:
         try:
-            audiofile_processed = remove_bass(filePath=app.config["DOWNLOAD_FOLDER"] + fileName)
+            audiofile_processed = remove_bass(filePath='static/audiofiles/downloaded/' + fileName)
 
             # we remove donwloaded audio, we dont need it anymore
-            os.remove(app.config["DOWNLOAD_FOLDER"] + fileName)
+            os.remove('static/audiofiles/downloaded/' + fileName)
 
             currtime = time.strftime("%Y%m%d-%H%M%S")
             unique_filename = secure_filename(fileName) + currtime + ".wav"
-            audiofile_processed.export(app.config["PROCESSED_FOLDER"] + unique_filename, format="wav")
+            audiofile_processed.export('static/audiofiles/processed/' + unique_filename, format="wav")
 
             return jsonify({
                 "filename": unique_filename,
@@ -72,13 +72,15 @@ def upload_audio():
             unique_filename = os.path.splitext(secure_filename(audiofile.filename))[0] + currtime + ".wav"
 
             audiofile_processed = remove_bass(audiofile=audiofile)
-            audiofile_processed.export(app.config["PROCESSED_FOLDER"] + unique_filename, format="wav")
+            audiofile_processed.export('static/audiofiles/processed/' + unique_filename, format="wav")
 
             return jsonify({
                 "filename": unique_filename,
                 "status": 200
             })
-        except:
+
+        except Exception as e:
+            print(e)
             return jsonify({
                 "error": "An error occured during processing. Please try again.",
                 "status": 500
@@ -96,12 +98,12 @@ def download_audio(filename):
         @after_this_request
         def remove_file(response):
             try:
-                os.remove(app.config["PROCESSED_FOLDER"] + filename)
+                os.remove(filename)
                 return response
             except:
                 return response
 
-        return send_from_directory(app.config["PROCESSED_FOLDER"], filename, as_attachment=True)
+        return send_from_directory('static/audiofiles/processed/', filename, as_attachment=True)
     except:
         return jsonify({
             "error": "There was an error fetching your file.",

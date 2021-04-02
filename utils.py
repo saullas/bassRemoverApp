@@ -2,7 +2,6 @@ from __future__ import unicode_literals
 
 import glob
 import os
-from threading import Timer
 from youtube_dl import YoutubeDL
 
 MAX_DURATION = 20 * 60
@@ -20,11 +19,11 @@ ydl_opts = {
 
 
 def delete_all_audiofiles():
-    files = glob.glob('static/audiofiles/processed/*')
+    files = glob.glob('static/audiofiles/processed/*.wav')
     for f in files:
         os.remove(f)
 
-    files = glob.glob('static/audiofiles/downloaded/*')
+    files = glob.glob('static/audiofiles/downloaded/*.mp3')
     for f in files:
         os.remove(f)
 

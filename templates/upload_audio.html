@@ -40,6 +40,10 @@
 
         <p class="lead" style="color: white">OR</p>
 
+        <div class="container-fluid myProgress">
+            <div id="myBar"></div>
+        </div>
+
         <div class="container">
             <form action="/uploadAudio" id="uploadAudio" class="uploader" method="POST">
               <input id="file-upload" type="file" class="custom-file-input" name="audiofile" accept=".mp3, .wav">
@@ -49,10 +53,6 @@
                   <i class="fa fa-download" aria-hidden="true"></i>
                   <div id="text">Select an audio file (mp3 or wav)</div>
                 </div>
-{#                <div id="response" class="hidden">#}
-{#                  <progress class="progress" id="file-progress" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">#}
-{#                  </progress>#}
-{#                </div>#}
               </label>
             </form>
         </div>

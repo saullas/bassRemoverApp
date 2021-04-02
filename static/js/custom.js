@@ -1,7 +1,11 @@
 
 $(document).ready(function (){
+    var progressDiv = $('.myProgress')
+    var progressBar = document.getElementById("myBar");
+
     $('#download-group').hide();
     $('#user-message').hide();
+    progressDiv.hide();
 
     $('#download').on('click', function () {
         $('#download-group').fadeOut();
@@ -16,7 +20,8 @@ $(document).ready(function (){
             if ($('#user-message').is(":visible")) {
                 $('#user-message').fadeOut();
             }
-            // $('#response').show();
+
+            progressDiv.show()
 
             var numberOfDots = 0
             var uploadingText = setInterval(function () {
@@ -27,7 +32,7 @@ $(document).ready(function (){
 
             $(this).ajaxSubmit({
                 uploadProgress: function(event, position, total, percentageComplete) {
-                    console.log(percentageComplete)
+                    progressBar.style.width = percentageComplete + "%";
 
                     if (percentageComplete === 100) {
                         clearInterval(uploadingText)
@@ -49,6 +54,8 @@ $(document).ready(function (){
                         $('#user-message').fadeIn();
                         $('#user-message').text(data["error"]);
                     }
+                    progressDiv.hide()
+                    progressBar.style.width = "0"
                 }
             })
             $('#file-upload').val(undefined)

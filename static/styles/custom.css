@@ -235,3 +235,18 @@ html, body, * {
 #user-message {
 	color: white;
 }
+
+.container-fluid {
+	margin: auto;
+	max-width: 600px;
+	width: 40%;
+	border: 1px solid white;
+	padding: 2px;
+}
+
+#myBar {
+  	width: 10%;
+  	height: 10px;
+  	background-color: #454cad;
+	transition: width 200ms;
+}

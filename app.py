@@ -1,16 +1,20 @@
-from flask import Flask, render_template, request, send_from_directory, jsonify, after_this_request
-from werkzeug.utils import secure_filename
 import os
 import utils
-from bassRemover import remove_bass
 import time
+import sys
+
+from flask import Flask, render_template, request, send_from_directory, jsonify, after_this_request
+from werkzeug.utils import secure_filename
+from bassRemover import remove_bass
 
 app = Flask(__name__)
+app.config['MAX_CONTENT_LENGTH'] = 20 * 1024 * 1024
 
-processed_folder = os.path.dirname(__file__) + '/static/audiofiles/processed/'
-download_folder = os.path.dirname(__file__) + '/static/audiofiles/downloaded/'
+UPLOAD_FOLDER = os.path.dirname(__file__) + '/static/audiofiles/uploaded/'
+PROCESSED_FOLDER = os.path.dirname(__file__) + '/static/audiofiles/processed/'
+DOWNLOAD_FOLDER = os.path.dirname(__file__) + '/static/audiofiles/downloaded/'
 
-# delete all saved files when app starts
+# delete all saved files when app starts and every n minutes
 utils.delete_all_audiofiles()
 
 
@@ -36,14 +40,14 @@ def upload_url():
         })
     else:
         try:
-            audiofile_processed = remove_bass(filePath=download_folder + fileName)
+            audiofile_processed = remove_bass(filePath=DOWNLOAD_FOLDER + fileName)
 
             # remove downloaded audio, we dont need it anymore
-            os.remove(download_folder + fileName)
+            os.remove(DOWNLOAD_FOLDER + fileName)
 
             currtime = time.strftime("%Y%m%d-%H%M%S")
             unique_filename = secure_filename(fileName) + currtime + ".wav"
-            audiofile_processed.export(processed_folder + unique_filename, format="wav")
+            audiofile_processed.export(PROCESSED_FOLDER + unique_filename, format="wav")
 
             return jsonify({
                 "filename": unique_filename,
@@ -60,6 +64,7 @@ def upload_url():
 def upload_audio():
     if request.files:
         audiofile = request.files["audiofile"]
+        # filename = audiofile.filename
 
         if not utils.allowed_file(audiofile.filename):
             return jsonify({
@@ -67,12 +72,22 @@ def upload_audio():
                 "status": 400
             })
 
+        # audiofile.save(UPLOAD_FOLDER + filename)
+        # fileSize = os.stat(UPLOAD_FOLDER + filename).st_size
+        # os.remove(UPLOAD_FOLDER + filename)
+        #
+        # if fileSize > MAX_UPLOAD_LIMIT:
+        #     return jsonify({
+        #         "error": "File is too large.",
+        #         "status": 400
+        #     })
+
         try:
             currtime = time.strftime("%Y%m%d-%H%M%S")
             unique_filename = os.path.splitext(secure_filename(audiofile.filename))[0] + currtime + ".wav"
 
             audiofile_processed = remove_bass(audiofile=audiofile)
-            audiofile_processed.export(processed_folder + unique_filename, format="wav")
+            audiofile_processed.export(PROCESSED_FOLDER + unique_filename, format="wav")
 
             return jsonify({
                 "filename": unique_filename,
@@ -98,12 +113,12 @@ def download_audio(filename):
         @after_this_request
         def remove_file(response):
             try:
-                os.remove(processed_folder + filename)
+                os.remove(PROCESSED_FOLDER + filename)
                 return response
             except:
                 return response
 
-        return send_from_directory(processed_folder, filename, as_attachment=True)
+        return send_from_directory(PROCESSED_FOLDER, filename, as_attachment=True)
     except:
         return jsonify({
             "error": "There was an error fetching your file.",

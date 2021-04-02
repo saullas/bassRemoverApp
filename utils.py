@@ -2,12 +2,15 @@ from __future__ import unicode_literals
 
 import glob
 import os
+import threading
 from youtube_dl import YoutubeDL
 
 MAX_DURATION = 20 * 60
+FILE_DELETION_TIMER = 30.0 * 60.0
 
 processed_folder = os.path.dirname(__file__) + '/static/audiofiles/processed/'
 download_folder = os.path.dirname(__file__) + '/static/audiofiles/downloaded/'
+upload_folder = os.path.dirname(__file__) + '/static/audiofiles/uploaded/'
 
 ydl_opts = {
     'format': 'bestaudio/best',
@@ -22,11 +25,17 @@ ydl_opts = {
 
 
 def delete_all_audiofiles():
-    files = glob.glob(processed_folder + '*.wav')
+    threading.Timer(FILE_DELETION_TIMER, delete_all_audiofiles).start()
+
+    files = glob.glob(processed_folder + '*')
     for f in files:
         os.remove(f)
 
-    files = glob.glob(download_folder + '*.mp3')
+    files = glob.glob(download_folder + '*')
+    for f in files:
+        os.remove(f)
+
+    files = glob.glob(upload_folder + '*')
     for f in files:
         os.remove(f)
 

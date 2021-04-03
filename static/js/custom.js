@@ -1,4 +1,3 @@
-
 $(document).ready(function (){
     var progressDiv = $('.myProgress')
     var progressBar = document.getElementById("myBar");
@@ -20,6 +19,11 @@ $(document).ready(function (){
             if ($('#user-message').is(":visible")) {
                 $('#user-message').fadeOut();
             }
+
+
+            progressDiv.fadeIn(200)
+            $('#text').text('Uploading file...')
+
             $(this).ajaxSubmit({
                 beforeSend: function () {
                     progressDiv.show()
@@ -53,6 +57,18 @@ $(document).ready(function (){
                         $('#user-message').fadeIn();
                         $('#user-message').text("File too large");
                         $('#text').text('Select an audio file (mp3 or wav)');
+                    }
+                    progressDiv.fadeOut(200)
+                    progressBar.style.width = "0"
+                },
+                error: function(response) {
+                    if (response.status === 413) {
+                        progressDiv.fadeOut(200)
+                        progressBar.style.width = "0"
+                        $('#loading-overlay').fadeOut()
+                        $('#user-message').fadeIn();
+                        $('#user-message').text("File too large");
+                        $('#text').text('Select an audio file (*.mp3,*.wav max file size 50MB)');
                     }
                 }
             })

@@ -241,6 +241,7 @@ html, body, * {
 	max-width: 600px;
 	width: 40%;
 	border: 1px solid white;
+	border-radius: 2px;
 	padding: 2px;
 }
 

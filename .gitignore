@@ -3,3 +3,5 @@ venv/*
 tutorial-env/*
 __pycache__/*
 test-songs/*
+static/audiofiles/downloaded/*
+static/audiofiles/processed/*

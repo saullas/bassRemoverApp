@@ -1,16 +1,15 @@
 import os
 import utils
 import time
-import sys
 
 from flask import Flask, render_template, request, send_from_directory, jsonify, after_this_request
 from werkzeug.utils import secure_filename
 from bassRemover import remove_bass
 
 app = Flask(__name__)
-app.config['MAX_CONTENT_LENGTH'] = 20 * 1024 * 1024
+app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024
 
-UPLOAD_FOLDER = os.path.dirname(__file__) + '/static/audiofiles/uploaded/'
+# UPLOAD_FOLDER = os.path.dirname(__file__) + '/static/audiofiles/uploaded/'
 PROCESSED_FOLDER = os.path.dirname(__file__) + '/static/audiofiles/processed/'
 DOWNLOAD_FOLDER = os.path.dirname(__file__) + '/static/audiofiles/downloaded/'
 
@@ -124,7 +123,3 @@ def download_audio(filename):
             "error": "There was an error fetching your file.",
             "status": 500
         })
-
-
-# if __name__ == '__main__':
-#    app.run()

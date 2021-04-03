@@ -10,7 +10,7 @@ FILE_DELETION_TIMER = 30.0 * 60.0
 
 processed_folder = os.path.dirname(__file__) + '/static/audiofiles/processed/'
 download_folder = os.path.dirname(__file__) + '/static/audiofiles/downloaded/'
-upload_folder = os.path.dirname(__file__) + '/static/audiofiles/uploaded/'
+# upload_folder = os.path.dirname(__file__) + '/static/audiofiles/uploaded/'
 
 ydl_opts = {
     'format': 'bestaudio/best',
@@ -25,7 +25,7 @@ ydl_opts = {
 
 
 def delete_all_audiofiles():
-    threading.Timer(FILE_DELETION_TIMER, delete_all_audiofiles).start()
+    # threading.Timer(FILE_DELETION_TIMER, delete_all_audiofiles).start()
 
     files = glob.glob(processed_folder + '*')
     for f in files:
@@ -35,9 +35,9 @@ def delete_all_audiofiles():
     for f in files:
         os.remove(f)
 
-    files = glob.glob(upload_folder + '*')
-    for f in files:
-        os.remove(f)
+    # files = glob.glob(upload_folder + '*')
+    # for f in files:
+    #     os.remove(f)
 
 
 def allowed_file(filename):

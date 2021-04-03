@@ -1,16 +1,15 @@
 import os
 import utils
 import time
-import sys
 
 from flask import Flask, render_template, request, send_from_directory, jsonify, after_this_request
 from werkzeug.utils import secure_filename
 from bassRemover import remove_bass
 
 app = Flask(__name__)
-app.config['MAX_CONTENT_LENGTH'] = 20 * 1024 * 1024
+app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024
 
-UPLOAD_FOLDER = os.path.dirname(__file__) + '/static/audiofiles/uploaded/'
+# UPLOAD_FOLDER = os.path.dirname(__file__) + '/static/audiofiles/uploaded/'
 PROCESSED_FOLDER = os.path.dirname(__file__) + '/static/audiofiles/processed/'
 DOWNLOAD_FOLDER = os.path.dirname(__file__) + '/static/audiofiles/downloaded/'
 
@@ -64,23 +63,12 @@ def upload_url():
 def upload_audio():
     if request.files:
         audiofile = request.files["audiofile"]
-        # filename = audiofile.filename
 
         if not utils.allowed_file(audiofile.filename):
             return jsonify({
                 "error": "Unsupported format.",
                 "status": 400
             })
-
-        # audiofile.save(UPLOAD_FOLDER + filename)
-        # fileSize = os.stat(UPLOAD_FOLDER + filename).st_size
-        # os.remove(UPLOAD_FOLDER + filename)
-        #
-        # if fileSize > MAX_UPLOAD_LIMIT:
-        #     return jsonify({
-        #         "error": "File is too large.",
-        #         "status": 400
-        #     })
 
         try:
             currtime = time.strftime("%Y%m%d-%H%M%S")
@@ -124,7 +112,3 @@ def download_audio(filename):
             "error": "There was an error fetching your file.",
             "status": 500
         })
-
-
-# if __name__ == '__main__':
-#    app.run()
